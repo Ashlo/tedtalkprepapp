@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useColorScheme } 
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
+import FAB from '../components/FAB';
 
 export default function PrepareScreen() {
   const [showAITips, setShowAITips] = useState(false);
@@ -39,100 +40,96 @@ export default function PrepareScreen() {
   ];
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor }]}>
-      {/* Header Section */}
-      <View style={styles.header}>
-        <View>
-          <Text style={[styles.title, { color: textColor }]}>Ideate Your Talk</Text>
-          <Text style={[styles.subtitle, { color: isDark ? '#888' : '#666' }]}>
-            Take your ideas and make them shine
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={[styles.aiButton, { backgroundColor: '#e62b1e' }]}
-          onPress={() => setShowAITips(!showAITips)}>
-          <Ionicons name="bulb" size={24} color="#ffffff" />
-        </TouchableOpacity>
-      </View>
-
-      {/* AI Assistant Tips */}
-      {showAITips && (
-        <Animated.View
-          entering={FadeInDown}
-          style={[styles.aiTipsCard, { backgroundColor: '#e62b1e' }]}>
-          <View style={styles.aiHeader}>
-            <Ionicons name="sparkles" size={24} color="#ffffff" />
-            <Text style={styles.aiTitle}>AI Writing Assistant</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView style={[styles.container, { backgroundColor }]}>
+        {/* Header Section */}
+        <View style={styles.header}>
+          <View>
+            <Text style={[styles.title, { color: textColor }]}>Ideate Your Talk</Text>
+            <Text style={[styles.subtitle, { color: isDark ? '#888' : '#666' }]}>
+              Take your ideas and make them shine
+            </Text>
           </View>
-          <Text style={styles.aiDescription}>
-            "Try starting with a surprising statistic or a personal story that relates to your topic. This helps grab attention immediately."
-          </Text>
-          <TouchableOpacity style={styles.generateButton}>
-            <Text style={styles.generateButtonText}>Generate More Tips</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      )}
-
-      {/* Main Sections */}
-      <View style={styles.sections}>
-        {sections.map((section) => (
           <TouchableOpacity
-            key={section.id}
-            style={[styles.sectionCard, { backgroundColor: cardBackground }]}
-            onPress={() => {
-              if (section.id === 'hook') {
-                router.push('/(tabs)/hook');
-              } else if (section.id === 'structure') {
-                router.push('/(tabs)/structure');
-              } else if (section.id === 'storytelling') {
-                router.push('/(tabs)/storytelling');
-              }
-            }}>
-            <View style={styles.sectionHeader}>
-              <View style={styles.sectionIcon}>
-                <Ionicons name={section.icon} size={24} color="#e62b1e" />
-              </View>
-              <View style={styles.sectionInfo}>
-                <Text style={[styles.sectionTitle, { color: textColor }]}>
-                  {section.title}
-                </Text>
-                <Text style={[styles.sectionDescription, { color: isDark ? '#888' : '#666' }]}>
-                  {section.description}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={24} color="#e62b1e" />
-            </View>
+            style={[styles.aiButton, { backgroundColor: '#e62b1e' }]}
+            onPress={() => setShowAITips(!showAITips)}>
+            <Ionicons name="bulb" size={24} color="#ffffff" />
           </TouchableOpacity>
-        ))}
-      </View>
+        </View>
 
-      {/* Quick Actions */}
-      <View style={styles.quickActions}>
-        <TouchableOpacity
-          onPress={() => router.push('/(tabs)/practice')}
-          style={[styles.quickActionCard, { backgroundColor: cardBackground }]}>
-          <Ionicons name="mic-outline" size={32} color="#e62b1e" />
-          <Text style={[styles.quickActionText, { color: textColor }]}>
-            Practice Mode
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.quickActionCard, { backgroundColor: cardBackground }]}>
-          <Ionicons name="analytics-outline" size={32} color="#e62b1e" />
-          <Text style={[styles.quickActionText, { color: textColor }]}>
-            Analysis
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* AI Assistant Tips */}
+        {showAITips && (
+          <Animated.View
+            entering={FadeInDown}
+            style={[styles.aiTipsCard, { backgroundColor: '#e62b1e' }]}>
+            <View style={styles.aiHeader}>
+              <Ionicons name="sparkles" size={24} color="#ffffff" />
+              <Text style={styles.aiTitle}>AI Writing Assistant</Text>
+            </View>
+            <Text style={styles.aiDescription}>
+              "Try starting with a surprising statistic or a personal story that relates to your topic. This helps grab attention immediately."
+            </Text>
+            <TouchableOpacity style={styles.generateButton}>
+              <Text style={styles.generateButtonText}>Generate More Tips</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
 
-      {/* Start Button */}
-      <TouchableOpacity style={styles.startButton}
-        onPress={() => router.push('/(tabs)/preparation')}
-      >
-        <Text style={styles.startButtonText}>Begin Preparation</Text>
-        <Ionicons name="arrow-forward" size={20} color="#ffffff" />
-      </TouchableOpacity>
-    </ScrollView>
+        {/* Main Sections */}
+        <View style={styles.sections}>
+          {sections.map((section) => (
+            <TouchableOpacity
+              key={section.id}
+              style={[styles.sectionCard, { backgroundColor: cardBackground }]}
+              onPress={() => {
+                if (section.id === 'hook') {
+                  router.push('/(tabs)/hook');
+                } else if (section.id === 'structure') {
+                  router.push('/(tabs)/structure');
+                } else if (section.id === 'storytelling') {
+                  router.push('/(tabs)/storytelling');
+                }
+              }}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionIcon}>
+                  <Ionicons name={section.icon} size={24} color="#e62b1e" />
+                </View>
+                <View style={styles.sectionInfo}>
+                  <Text style={[styles.sectionTitle, { color: textColor }]}>
+                    {section.title}
+                  </Text>
+                  <Text style={[styles.sectionDescription, { color: isDark ? '#888' : '#666' }]}>
+                    {section.description}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#e62b1e" />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Quick Actions */}
+        <View style={styles.quickActions}>
+          <TouchableOpacity
+            onPress={() => router.push('/(tabs)/practice')}
+            style={[styles.quickActionCard, { backgroundColor: cardBackground }]}>
+            <Ionicons name="mic-outline" size={32} color="#e62b1e" />
+            <Text style={[styles.quickActionText, { color: textColor }]}>
+              Practice Mode
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.quickActionCard, { backgroundColor: cardBackground }]}>
+            <Ionicons name="analytics-outline" size={32} color="#e62b1e" />
+            <Text style={[styles.quickActionText, { color: textColor }]}>
+              Analysis
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+      
+      <FAB onPress={() => router.push('/(tabs)/preparation')} />
+    </View>
   );
 }
 
@@ -263,21 +260,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
-  },
-  startButton: {
-    backgroundColor: '#e62b1e',
-    margin: 24,
-    marginTop: 8,
-    padding: 16,
-    borderRadius: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  startButtonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
