@@ -43,9 +43,9 @@ export default function PrepareScreen() {
       {/* Header Section */}
       <View style={styles.header}>
         <View>
-          <Text style={[styles.title, { color: textColor }]}>Prepare Your Talk</Text>
+          <Text style={[styles.title, { color: textColor }]}>Ideate Your Talk</Text>
           <Text style={[styles.subtitle, { color: isDark ? '#888' : '#666' }]}>
-            Let's make your ideas shine
+            Take your ideas and make them shine
           </Text>
         </View>
         <TouchableOpacity
@@ -82,6 +82,10 @@ export default function PrepareScreen() {
             onPress={() => {
               if (section.id === 'hook') {
                 router.push('/(tabs)/hook');
+              } else if (section.id === 'structure') {
+                router.push('/(tabs)/structure');
+              } else if (section.id === 'storytelling') {
+                router.push('/(tabs)/storytelling');
               }
             }}>
             <View style={styles.sectionHeader}>

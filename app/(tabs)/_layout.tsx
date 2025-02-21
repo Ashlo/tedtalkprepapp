@@ -63,6 +63,24 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="structure"
+        options={{
+          title: 'Talk Structure',
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="storytelling"
+        options={{
+          title: 'Storytelling',
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
