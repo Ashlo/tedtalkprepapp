@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useColorScheme } 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import BackButton from '../components/BackButton';
 
 export default function PreparationScreen() {
   const router = useRouter();
@@ -47,11 +48,7 @@ export default function PreparationScreen() {
   return (
     <ScrollView style={[styles.container, { backgroundColor: isDark ? '#1a1a1a' : '#ffffff' }]}>
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.push('/')}>
-          <Ionicons name="arrow-back" size={24} color={isDark ? '#ffffff' : '#000000'} />
-        </TouchableOpacity>
+        <BackButton />
         <View style={styles.headerTextContainer}>
           <Text style={[styles.title, { color: isDark ? '#ffffff' : '#000000' }]}>
             Preparation Roadmap
@@ -117,7 +114,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   headerTextContainer: {
-    marginTop: 24,
+    marginTop: 16,
   },
   title: {
     fontSize: 32,
@@ -190,12 +187,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
   },
 }); 
