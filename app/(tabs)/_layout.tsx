@@ -81,6 +81,15 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="preparation"
+        options={{
+          title: 'Preparation',
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 export default function StructureScreen() {
   const [selectedStructure, setSelectedStructure] = useState<string | null>(null);
   const [showTemplates, setShowTemplates] = useState(false);
   const colorScheme = useColorScheme();
   const router = useRouter();
+  const { from } = useLocalSearchParams();
 
   const isDark = colorScheme === 'dark';
   const textColor = isDark ? '#ffffff' : '#000000';
@@ -42,12 +43,20 @@ export default function StructureScreen() {
     { id: 'closing', title: 'Closing', duration: '1-2 min' },
   ];
 
+  const handleBack = () => {
+    if (from === 'preparation') {
+      router.push('/(tabs)/preparation');
+    } else {
+      router.back();
+    }
+  };
+
   return (
     <ScrollView style={[styles.container, { backgroundColor }]}>
       {/* Custom Back Button */}
       <TouchableOpacity 
         style={styles.backButton} 
-        onPress={() => router.back()}>
+        onPress={handleBack}>
         <Ionicons name="arrow-back" size={24} color={textColor} />
       </TouchableOpacity>
 

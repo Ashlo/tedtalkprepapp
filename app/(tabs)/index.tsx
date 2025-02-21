@@ -109,6 +109,7 @@ export default function PrepareScreen() {
       {/* Quick Actions */}
       <View style={styles.quickActions}>
         <TouchableOpacity
+          onPress={() => router.push('/(tabs)/practice')}
           style={[styles.quickActionCard, { backgroundColor: cardBackground }]}>
           <Ionicons name="mic-outline" size={32} color="#e62b1e" />
           <Text style={[styles.quickActionText, { color: textColor }]}>
@@ -125,7 +126,9 @@ export default function PrepareScreen() {
       </View>
 
       {/* Start Button */}
-      <TouchableOpacity style={styles.startButton}>
+      <TouchableOpacity style={styles.startButton}
+        onPress={() => router.push('/(tabs)/preparation')}
+      >
         <Text style={styles.startButtonText}>Begin Preparation</Text>
         <Ionicons name="arrow-forward" size={20} color="#ffffff" />
       </TouchableOpacity>
