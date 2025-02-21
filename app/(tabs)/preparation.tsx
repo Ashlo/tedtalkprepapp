@@ -47,12 +47,19 @@ export default function PreparationScreen() {
   return (
     <ScrollView style={[styles.container, { backgroundColor: isDark ? '#1a1a1a' : '#ffffff' }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: isDark ? '#ffffff' : '#000000' }]}>
-          Preparation Roadmap
-        </Text>
-        <Text style={[styles.subtitle, { color: isDark ? '#888' : '#666' }]}>
-          Estimated time: 90 minutes
-        </Text>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.push('/')}>
+          <Ionicons name="arrow-back" size={24} color={isDark ? '#ffffff' : '#000000'} />
+        </TouchableOpacity>
+        <View style={styles.headerTextContainer}>
+          <Text style={[styles.title, { color: isDark ? '#ffffff' : '#000000' }]}>
+            Preparation Roadmap
+          </Text>
+          <Text style={[styles.subtitle, { color: isDark ? '#888' : '#666' }]}>
+            Estimated time: 90 minutes
+          </Text>
+        </View>
       </View>
 
       <View style={styles.steps}>
@@ -106,8 +113,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 24,
+    padding: 16,
     paddingTop: 60,
+  },
+  headerTextContainer: {
+    marginTop: 24,
   },
   title: {
     fontSize: 32,
@@ -180,5 +190,12 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
   },
 }); 
