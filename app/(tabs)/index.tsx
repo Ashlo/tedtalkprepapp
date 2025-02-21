@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
 
 export default function PrepareScreen() {
   const [showAITips, setShowAITips] = useState(false);
   const colorScheme = useColorScheme();
+  const router = useRouter();
 
   const isDark = colorScheme === 'dark';
   const textColor = isDark ? '#ffffff' : '#000000';
@@ -17,21 +19,21 @@ export default function PrepareScreen() {
       id: 'hook',
       title: 'Opening Hook',
       description: 'Craft a powerful beginning',
-      icon: 'flash-outline',
+      icon: 'flash-outline' as const,
       progress: 0,
     },
     {
       id: 'structure',
       title: 'Talk Structure',
       description: 'Organize your ideas',
-      icon: 'git-branch-outline',
+      icon: 'git-branch-outline' as const,
       progress: 0,
     },
     {
       id: 'storytelling',
       title: 'Storytelling',
       description: 'Engage with narratives',
-      icon: 'book-outline',
+      icon: 'book-outline' as const,
       progress: 0,
     },
   ];
@@ -76,7 +78,12 @@ export default function PrepareScreen() {
         {sections.map((section) => (
           <TouchableOpacity
             key={section.id}
-            style={[styles.sectionCard, { backgroundColor: cardBackground }]}>
+            style={[styles.sectionCard, { backgroundColor: cardBackground }]}
+            onPress={() => {
+              if (section.id === 'hook') {
+                router.push('/(tabs)/hook');
+              }
+            }}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionIcon}>
                 <Ionicons name={section.icon} size={24} color="#e62b1e" />
