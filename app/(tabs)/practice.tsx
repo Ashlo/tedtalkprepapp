@@ -1,10 +1,21 @@
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import * as FileSystem from 'expo-file-system';
+
+interface Recording {
+  file: string;
+  duration: number;
+}
 
 export default function PracticeScreen() {
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [recordings, setRecordings] = useState<Recording[]>([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const colorScheme = useColorScheme();
   const scale = useSharedValue(1);
@@ -23,15 +34,76 @@ export default function PracticeScreen() {
     return () => clearInterval(interval);
   }, [isRecording]);
 
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  const startRecording = async () => {
+    try {
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+      setIsRecording(true);
+      setTime(0);
+      scale.value = withSpring(1.2);
+    } catch (err) {
+      console.error('Failed to start recording', err);
+    }
+  };
+
+  const stopRecording = async () => {
+    if (!recording) return;
+
+    try {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      if (!uri) return;
+
+      const info = await FileSystem.getInfoAsync(uri);
+      setRecordings(prev => [...prev, {
+        file: uri,
+        duration: time
+      }]);
+
+      setRecording(null);
+      setIsRecording(false);
+      scale.value = withSpring(1);
+    } catch (err) {
+      console.error('Failed to stop recording', err);
+    }
+  };
+
+  const playSound = async (uri: string) => {
+    if (sound) {
+      await sound.unloadAsync();
+    }
+
+    const { sound: newSound } = await Audio.Sound.createAsync({ uri });
+    setSound(newSound);
+    setIsPlaying(true);
+    await newSound.playAsync();
+    newSound.setOnPlaybackStatusUpdate((status) => {
+      if (status.isLoaded && !status.isPlaying) {
+        setIsPlaying(false);
+      }
+    });
+  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const toggleRecording = () => {
-    setIsRecording(!isRecording);
-    scale.value = withSpring(isRecording ? 1 : 1.2);
   };
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -55,7 +127,7 @@ export default function PracticeScreen() {
             styles.recordButton,
             { backgroundColor: isRecording ? '#ff4444' : '#e62b1e' },
           ]}
-          onPress={toggleRecording}>
+          onPress={isRecording ? stopRecording : startRecording}>
           <Ionicons
             name={isRecording ? 'stop' : 'mic'}
             size={40}
@@ -64,15 +136,22 @@ export default function PracticeScreen() {
         </TouchableOpacity>
       </Animated.View>
 
-      <View style={styles.statsContainer}>
-        <View style={[styles.statCard, { backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5' }]}>
-          <Text style={[styles.statValue, { color: textColor }]}>0</Text>
-          <Text style={[styles.statLabel, { color: textColor }]}>Practices</Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5' }]}>
-          <Text style={[styles.statValue, { color: textColor }]}>18:00</Text>
-          <Text style={[styles.statLabel, { color: textColor }]}>Target</Text>
-        </View>
+      <View style={styles.recordingsContainer}>
+        {recordings.map((rec, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.recordingItem, { backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5' }]}
+            onPress={() => playSound(rec.file)}>
+            <Ionicons
+              name={isPlaying ? 'pause' : 'play'}
+              size={24}
+              color={textColor}
+            />
+            <Text style={[styles.recordingText, { color: textColor }]}>
+              Recording {index + 1} ({formatTime(rec.duration)})
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
@@ -115,24 +194,19 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  recordingsContainer: {
     width: '100%',
-    paddingBottom: 40,
-  },
-  statCard: {
     padding: 20,
-    borderRadius: 15,
+  },
+  recordingItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    width: '45%',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
   },
-  statValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  statLabel: {
+  recordingText: {
+    marginLeft: 12,
     fontSize: 16,
-    marginTop: 4,
   },
 });
