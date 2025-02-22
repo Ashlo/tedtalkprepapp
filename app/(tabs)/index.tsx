@@ -4,9 +4,12 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import FAB from '../components/FAB';
+import NewTalkModal from '../components/NewTalkModal';
+import { runOnJS } from 'react-native-reanimated';
 
 export default function PrepareScreen() {
   const [showAITips, setShowAITips] = useState(false);
+  const [showNewTalkModal, setShowNewTalkModal] = useState(false);
   const colorScheme = useColorScheme();
   const router = useRouter();
 
@@ -38,6 +41,20 @@ export default function PrepareScreen() {
       progress: 0,
     },
   ];
+
+  const handleNewTalk = async (topic: string, description: string) => {
+    // Show toast first, then close modal after a delay
+    await new Promise(resolve => setTimeout(resolve, 2800)); // Wait for toast animation
+    setShowNewTalkModal(false);
+    
+    // Longer delay before navigation
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    router.push({
+      pathname: '/(tabs)/preparation',
+      params: { topic, description }
+    });
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -127,8 +144,14 @@ export default function PrepareScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      {/* Floating Action Button */}
+      <FAB onPress={() => setShowNewTalkModal(true)} />
       
-      <FAB onPress={() => router.push('/(tabs)/preparation')} />
+      <NewTalkModal
+        visible={showNewTalkModal}
+        onClose={() => setShowNewTalkModal(false)}
+        onSubmit={handleNewTalk}
+      />
     </View>
   );
 }
