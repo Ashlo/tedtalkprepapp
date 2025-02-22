@@ -7,50 +7,44 @@ import FAB from '../components/FAB';
 import NewTalkModal from '../components/NewTalkModal';
 import { runOnJS } from 'react-native-reanimated';
 import FeaturedTalks from '../components/FeaturedTalks';
+import Avatar from '../components/Avatar';
 
-export default function PrepareScreen() {
-  const [showAITips, setShowAITips] = useState(false);
+const COLORS = {
+  primary: '#e62b1e',
+  secondary: '#000000',
+  success: '#10B981',
+  warning: '#FBBF24',
+  info: '#3B82F6',
+  background: {
+    light: '#FFFFFF',
+    dark: '#000000'
+  },
+  card: {
+    light: '#FFFFFF',
+    dark: '#1A1A1A'
+  },
+  text: {
+    light: '#1F2937',
+    dark: '#F3F4F6'
+  },
+  accent: {
+    red: '#e62b1e',
+    darkRed: '#cc251a',
+    gray: '#2a2a2a',
+    lightGray: '#f5f5f5'
+  }
+};
+
+export default function DashboardScreen() {
   const [showNewTalkModal, setShowNewTalkModal] = useState(false);
   const colorScheme = useColorScheme();
   const router = useRouter();
-
   const isDark = colorScheme === 'dark';
-  const textColor = isDark ? '#ffffff' : '#000000';
-  const backgroundColor = isDark ? '#1a1a1a' : '#ffffff';
-  const cardBackground = isDark ? '#2a2a2a' : '#f5f5f5';
-
-  const sections = [
-    {
-      id: 'hook',
-      title: 'Opening Hook',
-      description: 'Craft a powerful beginning',
-      icon: 'flash-outline' as const,
-      progress: 0,
-    },
-    {
-      id: 'structure',
-      title: 'Talk Structure',
-      description: 'Organize your ideas',
-      icon: 'git-branch-outline' as const,
-      progress: 0,
-    },
-    {
-      id: 'storytelling',
-      title: 'Storytelling',
-      description: 'Engage with narratives',
-      icon: 'book-outline' as const,
-      progress: 0,
-    },
-  ];
-
+  
   const handleNewTalk = async (topic: string, description: string) => {
-    // Show toast first, then close modal after a delay
-    await new Promise(resolve => setTimeout(resolve, 2800)); // Wait for toast animation
+    await new Promise(resolve => setTimeout(resolve, 1000));
     setShowNewTalkModal(false);
-    
-    // Longer delay before navigation
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise(resolve => setTimeout(resolve, 1500));
     router.push({
       pathname: '/(tabs)/preparation',
       params: { topic, description }
@@ -58,99 +52,113 @@ export default function PrepareScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView style={[styles.container, { backgroundColor }]}>
-        {/* Header Section */}
+    <View style={{ flex: 1, backgroundColor: isDark ? COLORS.background.dark : COLORS.background.light }}>
+      <ScrollView style={styles.container}>
         <View style={styles.header}>
-          <View>
-            <Text style={[styles.title, { color: textColor }]}>Ideate Your Talk</Text>
-            <Text style={[styles.subtitle, { color: isDark ? '#888' : '#666' }]}>
-              Take your ideas and make them shine
+          <View style={styles.brandingContainer}>
+            <Text style={[styles.tedxLogo, { color: COLORS.primary }]}>TALKx</Text>
+            <Text style={[styles.prepareText, { color: isDark ? COLORS.text.dark : COLORS.text.light }]}>
+              Prepare
             </Text>
           </View>
-          <TouchableOpacity
-            style={[styles.aiButton, { backgroundColor: '#e62b1e' }]}
-            onPress={() => setShowAITips(!showAITips)}>
-            <Ionicons name="bulb" size={24} color="#ffffff" />
-          </TouchableOpacity>
+          <Avatar 
+            size={44}
+            image={require('../../assets/images/favicon.png')} // Optional: Add user's profile image
+          />
         </View>
 
-        {/* AI Assistant Tips */}
-        {showAITips && (
-          <Animated.View
-            entering={FadeInDown}
-            style={[styles.aiTipsCard, { backgroundColor: '#e62b1e' }]}>
-            <View style={styles.aiHeader}>
-              <Ionicons name="sparkles" size={24} color="#ffffff" />
-              <Text style={styles.aiTitle}>AI Writing Assistant</Text>
+        <Text style={[styles.greeting, { color: isDark ? COLORS.text.dark : COLORS.text.light }]}>
+          Hello Ash 👋
+        </Text>
+        
+        <View style={styles.bentoGrid}>
+          {/* Quick Start Card */}
+          <TouchableOpacity 
+            style={[styles.card, styles.cardLarge, { 
+              backgroundColor: isDark ? COLORS.card.dark : COLORS.card.light,
+              borderColor: COLORS.primary,
+              borderWidth: 1,
+            }]}
+            onPress={() => setShowNewTalkModal(true)}>
+            <View style={[styles.iconContainer, { backgroundColor: `${COLORS.primary}15` }]}>
+              <Ionicons name="rocket-outline" size={32} color={COLORS.primary} />
             </View>
-            <Text style={styles.aiDescription}>
-              "Try starting with a surprising statistic or a personal story that relates to your topic. This helps grab attention immediately."
+            <Text style={[styles.cardTitle, { color: isDark ? COLORS.text.dark : COLORS.text.light }]}>
+              Quick Start
             </Text>
-            <TouchableOpacity style={styles.generateButton}>
-              <Text style={styles.generateButtonText}>Generate More Tips</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-
-        {/* Main Sections */}
-        <View style={styles.sections}>
-          {sections.map((section) => (
-            <TouchableOpacity
-              key={section.id}
-              style={[styles.sectionCard, { backgroundColor: cardBackground }]}
-              onPress={() => {
-                if (section.id === 'hook') {
-                  router.push('/(tabs)/hook');
-                } else if (section.id === 'structure') {
-                  router.push('/(tabs)/structure');
-                } else if (section.id === 'storytelling') {
-                  router.push('/(tabs)/storytelling');
-                }
-              }}>
-              <View style={styles.sectionHeader}>
-                <View style={styles.sectionIcon}>
-                  <Ionicons name={section.icon} size={24} color="#e62b1e" />
-                </View>
-                <View style={styles.sectionInfo}>
-                  <Text style={[styles.sectionTitle, { color: textColor }]}>
-                    {section.title}
-                  </Text>
-                  <Text style={[styles.sectionDescription, { color: isDark ? '#888' : '#666' }]}>
-                    {section.description}
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={24} color="#e62b1e" />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Quick Actions */}
-        <View style={styles.quickActions}>
-          <TouchableOpacity
-            onPress={() => router.push('/(tabs)/practice')}
-            style={[styles.quickActionCard, { backgroundColor: cardBackground }]}>
-            <Ionicons name="mic-outline" size={32} color="#e62b1e" />
-            <Text style={[styles.quickActionText, { color: textColor }]}>
-              Practice Mode
+            <Text style={styles.cardDescription}>
+              Begin crafting your next talk
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.quickActionCard, { backgroundColor: cardBackground }]}>
-            <Ionicons name="analytics-outline" size={32} color="#e62b1e" />
-            <Text style={[styles.quickActionText, { color: textColor }]}>
-              Analysis
+
+          {/* Recent Progress */}
+          <TouchableOpacity 
+            style={[styles.card, { 
+              backgroundColor: isDark ? COLORS.card.dark : COLORS.card.light,
+              borderColor: COLORS.success,
+              borderWidth: 1,
+            }]}
+            onPress={() => router.push('/(tabs)/library')}>
+            <View style={[styles.iconContainer, { backgroundColor: `${COLORS.success}15` }]}>
+              <Ionicons name="time-outline" size={24} color={COLORS.success} />
+            </View>
+            <Text style={[styles.cardTitle, { color: isDark ? COLORS.text.dark : COLORS.text.light }]}>
+              Recent
             </Text>
+            <Text style={styles.cardDescription}>3 drafts</Text>
+          </TouchableOpacity>
+
+          {/* Practice Stats */}
+          <TouchableOpacity 
+            style={[styles.card, { 
+              backgroundColor: isDark ? COLORS.card.dark : COLORS.card.light,
+              borderColor: COLORS.info,
+              borderWidth: 1,
+            }]}
+            onPress={() => router.push('/(tabs)/practice')}>
+            <View style={[styles.iconContainer, { backgroundColor: `${COLORS.info}15` }]}>
+              <Ionicons name="analytics-outline" size={24} color={COLORS.info} />
+            </View>
+            <Text style={[styles.cardTitle, { color: isDark ? COLORS.text.dark : COLORS.text.light }]}>
+              Practice
+            </Text>
+            <Text style={styles.cardDescription}>2.5 hours</Text>
+          </TouchableOpacity>
+
+          {/* Featured Talk */}
+          <TouchableOpacity 
+            style={[styles.card, styles.cardWide, { 
+              backgroundColor: isDark ? COLORS.card.dark : COLORS.card.light,
+              borderColor: COLORS.secondary,
+              borderWidth: 1,
+            }]}>
+            <View style={[styles.iconContainer, { backgroundColor: `${COLORS.secondary}15` }]}>
+              <Ionicons name="play-circle-outline" size={24} color={COLORS.secondary} />
+            </View>
+            <Text style={[styles.cardTitle, { color: isDark ? COLORS.text.dark : COLORS.text.light }]}>
+              Featured Talk
+            </Text>
+            <Text style={styles.cardDescription}>"The Power of Public Speaking"</Text>
+          </TouchableOpacity>
+
+          {/* AI Assistant */}
+          <TouchableOpacity 
+            style={[styles.card, styles.cardWide, { 
+              backgroundColor: isDark ? COLORS.card.dark : COLORS.card.light,
+              borderColor: COLORS.warning,
+              borderWidth: 1,
+            }]}>
+            <View style={[styles.iconContainer, { backgroundColor: `${COLORS.warning}15` }]}>
+              <Ionicons name="bulb-outline" size={24} color={COLORS.warning} />
+            </View>
+            <Text style={[styles.cardTitle, { color: isDark ? COLORS.text.dark : COLORS.text.light }]}>
+              AI Assistant
+            </Text>
+            <Text style={styles.cardDescription}>Get personalized suggestions</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Add Featured Talks section */}
-        <FeaturedTalks />
       </ScrollView>
-      {/* Floating Action Button */}
-      <FAB onPress={() => setShowNewTalkModal(true)} />
-      
+
       <NewTalkModal
         visible={showNewTalkModal}
         onClose={() => setShowNewTalkModal(false)}
@@ -163,129 +171,85 @@ export default function PrepareScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 24,
-    paddingTop: 48,
+    alignItems: 'flex-start',
+    marginTop: 60,
+    marginBottom: 20,
+    paddingHorizontal: 16,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 4,
+  brandingContainer: {
+    marginTop: 0,
   },
-  subtitle: {
-    fontSize: 16,
+  tedxLogo: {
+    fontSize: 42,
+    fontWeight: '900',
+    letterSpacing: -1,
   },
-  aiButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  aiTipsCard: {
-    margin: 24,
-    padding: 20,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  aiHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  aiTitle: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  aiDescription: {
-    color: '#ffffff',
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 16,
-  },
-  generateButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  generateButtonText: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-  sections: {
-    padding: 24,
-    gap: 16,
-  },
-  sectionCard: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2.84,
-    elevation: 3,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  sectionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(230, 43, 30, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  sectionInfo: {
-    flex: 1,
-  },
-  sectionTitle: {
+  prepareText: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+    marginTop: 4,
   },
-  sectionDescription: {
-    fontSize: 14,
+  greeting: {
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 24,
+    paddingHorizontal: 8,
   },
-  quickActions: {
+  bentoGrid: {
     flexDirection: 'row',
-    padding: 24,
+    flexWrap: 'wrap',
     gap: 16,
+    padding: 8,
   },
-  quickActionCard: {
-    flex: 1,
+  card: {
     padding: 20,
-    borderRadius: 16,
-    alignItems: 'center',
+    borderRadius: 24,
+    width: '47%',
+    aspectRatio: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2.84,
-    elevation: 3,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#e62b1e15',
   },
-  quickActionText: {
-    marginTop: 12,
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+  cardLarge: {
+    width: '100%',
+    aspectRatio: 2,
+  },
+  cardWide: {
+    width: '100%',
+    aspectRatio: 2.5,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    backgroundColor: '#e62b1e10',
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 4,
+    color: COLORS.primary,
+  },
+  cardDescription: {
+    fontSize: 15,
+    color: '#666666',
+    opacity: 0.8,
   },
 });

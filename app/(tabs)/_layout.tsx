@@ -22,6 +22,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Prepare',
+          headerShown: false,
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="book-outline" size={size} color={color} />
           ),
