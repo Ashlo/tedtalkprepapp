@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import FAB from '../components/FAB';
 import NewTalkModal from '../components/NewTalkModal';
 import { runOnJS } from 'react-native-reanimated';
+import FeaturedTalks from '../components/FeaturedTalks';
 
 export default function PrepareScreen() {
   const [showAITips, setShowAITips] = useState(false);
@@ -143,6 +144,9 @@ export default function PrepareScreen() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Add Featured Talks section */}
+        <FeaturedTalks />
       </ScrollView>
       {/* Floating Action Button */}
       <FAB onPress={() => setShowNewTalkModal(true)} />
