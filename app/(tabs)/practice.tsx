@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import Animated, { withSpring, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import * as FileSystem from 'expo-file-system';
+import Toast from '../components/Toast';
 
 interface Recording {
   file: string;
@@ -19,6 +20,7 @@ export default function PracticeScreen() {
   const [time, setTime] = useState(0);
   const colorScheme = useColorScheme();
   const scale = useSharedValue(1);
+  const [showToast, setShowToast] = useState(false);
 
   const isDark = colorScheme === 'dark';
   const textColor = isDark ? '#ffffff' : '#000000';
@@ -112,6 +114,17 @@ export default function PracticeScreen() {
     };
   });
 
+  const deleteRecording = async (index: number) => {
+    try {
+      const recording = recordings[index];
+      await FileSystem.deleteAsync(recording.file);
+      setRecordings(prev => prev.filter((_, i) => i !== index));
+      setShowToast(true);
+    } catch (err) {
+      console.error('Failed to delete recording', err);
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.timerContainer}>
@@ -138,21 +151,35 @@ export default function PracticeScreen() {
 
       <View style={styles.recordingsContainer}>
         {recordings.map((rec, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.recordingItem, { backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5' }]}
-            onPress={() => playSound(rec.file)}>
-            <Ionicons
-              name={isPlaying ? 'pause' : 'play'}
-              size={24}
-              color={textColor}
-            />
-            <Text style={[styles.recordingText, { color: textColor }]}>
-              Recording {index + 1} ({formatTime(rec.duration)})
-            </Text>
-          </TouchableOpacity>
+          <View key={index} style={[styles.recordingItem, { backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5' }]}>
+            <TouchableOpacity
+              style={styles.playButton}
+              onPress={() => playSound(rec.file)}>
+              <Ionicons
+                name={isPlaying ? 'pause' : 'play'}
+                size={24}
+                color={textColor}
+              />
+              <Text style={[styles.recordingText, { color: textColor }]}>
+                Recording {index + 1} ({formatTime(rec.duration)})
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => deleteRecording(index)}>
+              <Ionicons name="trash-outline" size={20} color="#e62b1e" />
+            </TouchableOpacity>
+          </View>
         ))}
       </View>
+
+      <Toast
+        message="Recording deleted successfully"
+        isVisible={showToast}
+        onHide={() => setShowToast(false)}
+        type="success"
+      />
     </View>
   );
 }
@@ -204,6 +231,15 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
+    justifyContent: 'space-between',
+  },
+  playButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  deleteButton: {
+    padding: 8,
   },
   recordingText: {
     marginLeft: 12,
